@@ -2,6 +2,7 @@ import "./globals.css";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
+import { M_PLUS_Rounded_1c } from "next/font/google";
 
 export const metadata = {
   title: "Create Next App",
@@ -9,13 +10,15 @@ export const metadata = {
   themeColor: "#ffffff",
 };
 
+export const mplus = M_PLUS_Rounded_1c({ weight: "400", subsets: ["latin"] });
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
+    <html lang="ja" className={mplus.className}>
       <head />
       <body>
         <Header />
