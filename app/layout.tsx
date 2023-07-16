@@ -1,7 +1,5 @@
-import Link from "next/link";
 import "./globals.css";
 import Header from "./Header";
-import css from "styled-jsx/css";
 import Main from "./Main";
 import Footer from "./Footer";
 

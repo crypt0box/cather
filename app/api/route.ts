@@ -1,10 +1,6 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import { randomUUID } from "crypto";
-import { NextRequest, NextResponse } from "next/server";
-import { Article } from "../types";
-import { INTERNALS } from "next/dist/server/web/spec-extension/request";
+import { NextRequest } from "next/server";
 
 const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
