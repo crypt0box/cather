@@ -3,6 +3,7 @@
 import { css } from "@/styled-system/css";
 import { container } from "@/styled-system/patterns";
 import Image from "next/image";
+import WordCloud from "./WordCloud";
 
 export default function Book({ params }: { params: { slug: string } }) {
   const words = [
@@ -36,11 +37,9 @@ export default function Book({ params }: { params: { slug: string } }) {
           className={container({
             display: "flex",
             justifyContent: "center",
-            w: "100%",
-            maxW: "600px",
-            h: "100%",
           })}
         >
+          <WordCloud />
           {/* <Image
             className={css({
               rounded: "2px",
