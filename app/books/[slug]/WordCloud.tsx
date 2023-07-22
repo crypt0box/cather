@@ -5,11 +5,20 @@ import { useEffect, useRef } from "react";
 export default function WordCloud() {
   const wordCloudRef = useRef<SVGSVGElement | null>(null);
   // wordcloudのデータとオプションを定義
-  const data = ["Hello", "World", "Bing", "Search", "AI", "Chat"];
+  const data = [
+    "Hello",
+    "World",
+    "Bing",
+    "Search",
+    "AI",
+    "Chat",
+    "こんいちわ",
+    "hogeheodfasfeaefae",
+  ];
 
   const options = {
     fontFamily: "Arial",
-    colors: ["#000000", "#333333", "#666666", "#999999", "#cccccc", "#ffffff"],
+    color: "#000",
     shape: "circle",
   };
 
@@ -17,13 +26,16 @@ export default function WordCloud() {
     if (!wordCloudRef) return;
     // 単語の境界ボックスの配列を作成
     const boxes: SVGRect[] = [];
+    const SP_WIDTH = 400;
+    const MAX_SVG_WIDTH = 600;
+    const MAX_SVG_HEIGHT = 400;
 
     // svg要素の幅と高さを取得
     const width =
-      window.innerWidth < 400
+      window.innerWidth < SP_WIDTH
         ? window.innerWidth
-        : wordCloudRef.current?.clientWidth ?? 600;
-    const height = wordCloudRef.current?.clientHeight ?? 400;
+        : wordCloudRef.current?.clientWidth ?? MAX_SVG_WIDTH;
+    const height = wordCloudRef.current?.clientHeight ?? MAX_SVG_HEIGHT;
 
     data.forEach((word, index) => {
       // text要素を作成
@@ -33,10 +45,11 @@ export default function WordCloud() {
       );
 
       // text要素に単語とその重みに応じたフォントサイズや色を設定
+      const fontSize = 36 - 2 * index;
       text.textContent = word;
-      text.style.fontSize = `${index * 10}px`;
+      text.style.fontSize = `${fontSize > 16 ? fontSize : 16}px`;
       text.style.fontFamily = options.fontFamily;
-      text.style.fill = options.colors[index - 1];
+      text.style.fill = options.color;
 
       // svg要素にtext要素を追加
       wordCloudRef.current?.appendChild(text);
@@ -50,14 +63,26 @@ export default function WordCloud() {
 
     // 単語の位置を決める関数
     function placeWords() {
+      let cnt = 0;
       // 単語ごとに処理
       for (let i = 0; i < data.length; i++) {
+        // 無限ループを防ぐ
+        if (cnt > 50) {
+          break;
+        }
+
         // 単語の境界ボックスを取得
         const box = boxes[i];
 
-        // 単語の位置をランダムに決める
-        let x = Math.random() * (width - box.width);
-        let y = Math.random() * (height - box.height);
+        // 単語の位置を任意の範囲でランダムに決める
+        const MIN_RANDOM = 0.2;
+        const MAX_RANDOM = 0.8;
+        let x =
+          (Math.random() * (MAX_RANDOM - MIN_RANDOM) + MIN_RANDOM) *
+          (width - box.width);
+        let y =
+          (Math.random() * (MAX_RANDOM - MIN_RANDOM) + MIN_RANDOM) *
+          (height - box.height);
 
         // 単語が他の単語と重なっているかどうかをチェックするフラグ
         let overlap = false;
@@ -69,10 +94,13 @@ export default function WordCloud() {
 
           // 境界ボックス同士が交差しているかどうかを判定
           if (
-            x < prevBox.x + prevBox.width &&
-            x + box.width > prevBox.x &&
-            y < prevBox.y + prevBox.height &&
-            y + box.height > prevBox.y
+            (x < prevBox.x + prevBox.width &&
+              x + box.width > prevBox.x &&
+              y < prevBox.y + prevBox.height &&
+              y + box.height > prevBox.y) ||
+            x + box.width * 2 > width ||
+            y - box.height < 0 ||
+            y + box.height * 2 > height
           ) {
             // 交差している場合は、重なりフラグを立てる
             overlap = true;
@@ -84,6 +112,7 @@ export default function WordCloud() {
         // 重なりフラグが立っている場合は、再度位置を決める
         if (overlap) {
           i--;
+          cnt++;
           continue;
         }
 
